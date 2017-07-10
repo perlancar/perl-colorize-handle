@@ -23,26 +23,49 @@ sub unimport {
 
 
 1;
-# ABSTRACT: Colorize a filehandle
+# ABSTRACT: Colorize STDERR
 
 =for Pod::Coverage .+
 
 =head1 SYNOPSIS
 
- use colorize::handle \*STDERR, "yellow";
- ...
- no colorize::handle \*STDERR;
+ use colorize::stderr;
+ warn "blah!"; # will be printed in yellow
 
-But commonly used via L<colorize::stderr> or L<colorize::stdout>.
+If you want to customize color:
+
+ use colorize::stderr 'red on_white';
+ warn "blah!";
 
 
 =head1 DESCRIPTION
 
-This is a thin wrapper over L<PerlIO::via::ANSIColor>.
+This is a convenience wrapper over L<colorize::handle> for colorizing STDERR.
+
+Caveat: although this module provides C<unimport()>, this code does not do what
+you expect it to do:
+
+ {
+     use colorize::stderr;
+     warn "colored warning!";
+ }
+ warn "back to uncolored";
+
+Because C<no colorize::stderr> will be run at compile-time. You can do this
+though:
+
+ use colorize::stderr ();
+
+ {
+     colorize::stderr->import;
+     warn "colored warning!";
+     colorize::stderr->unimport;
+ }
+ warn "back to uncolored";
 
 
 =head1 SEE ALSO
 
-L<PerlIO::via::ANSIColor>
+L<colorize::handle>
 
 =cut

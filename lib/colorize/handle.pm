@@ -7,6 +7,8 @@ use strict;
 use warnings;
 use PerlIO::via::ANSIColor;
 
+my %colorized; # key = handle
+
 sub import {
     my ($pkg, $handle, $color) = @_;
     die "Please specify handle and color" unless $handle && $color;
@@ -29,7 +31,8 @@ sub unimport {
 
     my @layers = PerlIO::get_layers($handle);
     if ($pos == $#layers && $layers[$pos] eq 'via') {
-        print "POP\n";
+        # get_layers() only return 'via' so we assume that the last 'via' layer
+        # is us.
         binmode($handle, ':pop');
     }
 
@@ -45,15 +48,34 @@ sub unimport {
 =head1 SYNOPSIS
 
  use colorize::handle \*STDERR, "yellow";
- ...
- no colorize::handle \*STDERR;
 
-But commonly used via L<colorize::stderr> or L<colorize::stdout>.
+Also see the more convenient subclass L<colorize::stderr> for colorizing STDERR.
 
 
 =head1 DESCRIPTION
 
 This is a thin wrapper over L<PerlIO::via::ANSIColor>.
+
+Caveat: although this module provides C<unimport()>, this code does not do what
+you expect it to do:
+
+ {
+     use colorize::stderr;
+     warn "colored warning!";
+ }
+ warn "back to uncolored";
+
+Because C<no colorize::stderr> will be run at compile-time. You can do this
+though:
+
+ use colorize::stderr ();
+
+ {
+     colorize::stderr->import;
+     warn "colored warning!";
+     colorize::stderr->unimport;
+ }
+ warn "back to uncolored";
 
 
 =head1 SEE ALSO
