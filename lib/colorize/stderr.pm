@@ -37,6 +37,11 @@ If you want to customize color:
  use colorize::stderr 'red on_white';
  warn "blah!";
 
+Use in command-line, nifty for debugging (making it easy to notice whether an
+output to terminal is to STDOUT or STDERR):
+
+ % perl -Mcolorize::stderr ...
+
 
 =head1 DESCRIPTION
 
