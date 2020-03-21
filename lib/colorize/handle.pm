@@ -1,7 +1,11 @@
 package colorize::handle;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
+
+BEGIN { if ($^O =~ /^(MSWin32)$/) { require Win32::Console::ANSI } }
 
 use strict;
 use warnings;
