@@ -2,3 +2,4 @@ colorize-stderr-*
 .build
 *~
 nytprof*
+.DS_Store
